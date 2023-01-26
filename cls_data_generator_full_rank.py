@@ -41,6 +41,26 @@ class DataGenerator(object):
 
         self._get_filenames_list_and_feat_label_sizes()
 
+        print(
+            '\tDatagen_mode: {}, nb_files: {}, nb_classes:{}\n'
+            '\tnb_frames_file: {}, feat_len: {}, nb_ch: {}, label_len:{}\n'.format(
+                'eval' if self._is_eval else 'dev', len(self._filenames_list), self._nb_classes,
+                self._nb_frames_file, self._nb_mel_bins, self._nb_ch, self._label_len
+            )
+        )
+
+        print(
+            '\tDataset: {}, split: {}\n'
+            '\tbatch_size: {}, feat_seq_len: {}, label_seq_len: {}, shuffle: {}\n'
+            '\tTotal batches in dataset: {}\n'
+            '\tlabel_dir: {}\n '
+            '\tfeat_dir: {}\n'.format(
+                params['dataset'], split,
+                self._batch_size, self._feature_seq_len, self._label_seq_len, self._shuffle,
+                self._nb_total_batches,
+                self._label_dir, self._feat_dir
+            )
+        )
 
     def get_data_sizes(self):
         feat_shape = (self._batch_size, self._nb_ch, self._feature_seq_len, self._nb_mel_bins)
@@ -154,6 +174,13 @@ class DataGenerator(object):
                     temp_feat = np.load(os.path.join(self._feat_dir, self._filenames_list[file_cnt]))
                     temp_act_feat = np.load(os.path.join(self._actual_feat_dir, self._filenames_list[file_cnt]))
                     temp_label = np.load(os.path.join(self._label_dir, self._filenames_list[file_cnt]))
+                    # if not self._per_file:
+                    #     # Inorder to support variable length features, and labels of different resolution.
+                    #     # We remove all frames in features and labels matrix that are outside
+                    #     # the multiple of self._label_seq_len and self._feature_seq_len. Further we do this only in training.
+                    #     temp_label = temp_label[:temp_label.shape[0] - (temp_label.shape[0] % self._label_seq_len)]
+                    #     temp_mul = temp_label.shape[0] // self._label_seq_len
+                    #     temp_feat = temp_feat[:temp_mul * self._feature_seq_len, :]
 
                     for f_row in temp_feat:
                         self._circ_buf_feat.append(f_row)
@@ -161,6 +188,23 @@ class DataGenerator(object):
                         self._circ_buf_act_feat.append(f_row)
                     for l_row in temp_label:
                         self._circ_buf_label.append(l_row)
+
+                    # If self._per_file is True, this returns the sequences belonging to a single audio recording
+                    # if self._per_file:
+                    #     feat_extra_frames = self._feature_batch_seq_len - temp_feat.shape[0]
+                    #     extra_feat = np.ones((feat_extra_frames, temp_feat.shape[1])) * 1e-6
+                    #
+                    #     label_extra_frames = self._label_batch_seq_len - temp_label.shape[0]
+                    #     if self._multi_accdoa is True:
+                    #         extra_labels = np.zeros(
+                    #             (label_extra_frames, self._num_track_dummy, self._num_axis, self._num_class))
+                    #     else:
+                    #         extra_labels = np.zeros((label_extra_frames, temp_label.shape[1]))
+                    #
+                    #     for f_row in extra_feat:
+                    #         self._circ_buf_feat.append(f_row)
+                    #     for l_row in extra_labels:
+                    #         self._circ_buf_label.append(l_row)
 
                     file_cnt = file_cnt + 1
 
@@ -185,8 +229,12 @@ class DataGenerator(object):
                 # Split to sequences
                 feat = self._split_in_seqs(feat, self._feature_seq_len)
                 feat = np.transpose(feat, (0, 2, 1, 3))
+                # feat = feat.reshape((self._batch_size, 1, self._feature_seq_len, feat.shape[-1]))
+                # feat = (feat - 0.5) / 0.5
                 feat_act = self._split_in_seqs(feat_act, self._feature_seq_len)
                 feat_act = np.transpose(feat_act, (0, 2, 1, 3))
+                # feat_act = feat_act.reshape((self._batch_size, 1, self._feature_seq_len, feat_act.shape[-1]))
+                # feat_act = (feat_act - 0.5) / 0.5
                 label = self._split_in_seqs(label, self._label_seq_len)
                 if self._multi_accdoa is True:
                     pass

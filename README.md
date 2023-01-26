@@ -74,14 +74,14 @@ Change the ``seed`` and ``pct`` accordingly.
 
 ### Train the RecNet
 ```bash
-python main.py --type_=2 --seed=42 --epochs=300 --pct=0.75
+ python main.py --type_=2 --seed=42 --epochs=2 --pct=0.75
 ```
 Change the ``seed`` and ``pct`` accordingly.
 ***
 
 ### Test the full-rank model (FR) with low-rank data
 ```bash
-python main.py --test_fr --type_=1 --seed=<seed> --epochs=100 --pct=0.75 --test_model_name="./models/baseline_<seed>_0.h5"
+python main.py --test_fr --type_=1 --pct=<pct> --seed=42 --test_model_name="./models/baseline_<seed>_0.h5"
 ```
 Change the ``seed`` and ``pct`` accordingly.
 ***

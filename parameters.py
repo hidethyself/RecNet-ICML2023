@@ -20,7 +20,7 @@ def get_params(argv='4'):
 
         # OUTPUT PATHS
         # feat_label_dir='DCASE2020_SELD_dataset/feat_label_hnet/',  # Directory to dump extracted features and labels
-        feat_label_dir='./DCASE2021_SELD_dataset/seld_feat_label',
+        feat_label_dir='./DCASE2021_SELD_dataset/feat_label_low_rank',
 
         model_dir='models/',  # Dumps the trained models and training curves in this folder
         dcase_output_dir='results/',  # recording-wise results are dumped in this path.
