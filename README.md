@@ -22,10 +22,47 @@ pip install -r requirements.txt
 ***
 ### Project Structure
 
+```bash
+├── batch_feature_extraction.py
+├── cls_compute_seld_results.py
+├── cls_data_generator_full_rank.py
+├── cls_data_generator.py
+├── cls_feature_class.py
+├── DCASE2021_SELD_dataset
+│   ├── metadata_dev
+│   │   ├── dev-test
+│   │   ├── dev-train
+│   │   └── dev-val
+│   ├── mic_dev
+│   │   ├── dev-test
+│   │   ├── dev-train
+│   │   └── dev-val
+│   ├── mic_eval
+│   │   └── eval-test
+├── early_attention
+│   ├── attention.py
+├── interpolator
+│   ├── deep_interpolator.py
+├── main.py
+├── model.py
+├── parameters.py
+├── README.md
+├── requirements.txt
+├── result_txt
+├── SELD_evaluation_metrics.py
+├── seldnet_model.py
+├── test_fr.py
+├── trainer.py
+├── train_seldnet.py
+├── train_test_epoch.py
+└── visualize_seldnet_output.py
+
+```
+
 ***
 ### Create the full-rank data (Must be done before running RecNet)
 ```bash
-python main.py --full_rank
+python main.py --full_rank --epochs=100
 ```
 ***
 ### Train the baseline
