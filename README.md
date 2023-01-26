@@ -60,7 +60,7 @@ pip install -r requirements.txt
 ```
 
 ***
-### Create the full-rank data (Must be done before running RecNet)
+### Create the full-rank data and train baseline with full-rank <br>(Must be done before running RecNet)
 ```bash
 python main.py --full_rank --epochs=100
 ```
